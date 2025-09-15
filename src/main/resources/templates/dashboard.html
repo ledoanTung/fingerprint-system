@@ -92,29 +92,28 @@
             <div class="logo">DS</div>
             <div>
                 <h1>My Dashboard</h1>
-                <div class="desc">Bảng điều khiển demo</div>
+                <div class="desc">Bảng điều khiển</div>
             </div>
         </div>
 
         <nav class="nav">
             <label data-tab="dashboard" class="active"><span class="ico">🏠</span> Dashboard</label>
             <label data-tab="users"><span class="ico">👥</span> Users</label>
-            <label data-tab="reports"><span class="ico">📊</span> Reports</label>
+            <label data-tab="logs"><span class="ico">📋</span> Logs</label>
             <label data-tab="settings"><span class="ico">⚙️</span> Settings</label>
         </nav>
 
-        <div class="sfooter">Phiên bản demo • JS switch tab</div>
+        <div class="sfooter">Phiên bản demo • Fingerprint system</div>
     </aside>
 
     <main class="content">
         <div class="header">
             <div>
                 <h2>Dashboard</h2>
-                <div class="small">Tổng quan chức năng và dữ liệu mẫu</div>
             </div>
             <div class="controls">
                 <input class="search" placeholder="Tìm kiếm...">
-                <div class="small">User: admin</div>
+<!--                <div class="small">User: admin</div>-->
             </div>
         </div>
 
@@ -132,11 +131,9 @@
                     <h3>Danh sách Users</h3>
                     <a th:href="@{/user-create}" class="btn">+ Thêm mới User</a>
                 </div>
-
                 <table>
                     <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Username</th>
                         <th>Password</th>
                         <th>Role</th>
@@ -146,25 +143,43 @@
                     </thead>
                     <tbody>
                     <tr th:each="u : ${users}">
-                        <td th:text="${u.id}"></td>
                         <td th:text="${u.username}"></td>
                         <td th:text="${u.password}"></td>
                         <td th:text="${u.role}"></td>
                         <td th:text="${u.fingerprintId}"></td>
                         <td>
                             <a th:href="@{'/user/edit/' + ${u.id}}" class="btn-sm">Sửa</a>
-                            <a th:href="@{'/user/delete/' + ${u.id}}"
-                               class="btn-sm danger"
-                               onclick="return confirm('Bạn có chắc muốn xoá user này?')">Xoá</a>
+                            <button th:onclick="'deleteUser(' + ${u.id} + ')'" class="btn-sm danger">Xóa</button>
+
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </section>
 
+            <section id="logs" th:classappend="${tab == 'logs'} ? ' active'">
+                <div style="margin-bottom:12px">
+                    <h3>Admin Logs</h3>
+                </div>
 
-            <section id="reports">
-                <div class="card"><div class="small">Monthly Report</div><div class="big">February 2025</div></div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="log : ${logs}">
+                        <td th:text="${log.id}"></td>
+                        <td th:text="${log.userId}"></td>
+                        <td th:text="${#dates.format(log.time, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td th:text="${log.status}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </section>
 
             <section id="settings">
@@ -192,6 +207,22 @@
         headerTitle.textContent = label.textContent.trim();
       });
     });
+
+    async function deleteUser(id) {
+    if (!confirm("Bạn có chắc muốn xóa user này không?")) return;
+
+    const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+    if (res.ok) {
+        alert("Xóa thành công!");
+        // Xóa dòng <tr> khỏi bảng luôn
+        const row = document.querySelector(`button[onclick="deleteUser(${id})"]`).closest("tr");
+        if (row) row.remove();
+    } else {
+        alert("Không xóa được user (có thể user không tồn tại)");
+    }
+  }
+
+
 </script>
 </body>
 </html>

@@ -117,7 +117,7 @@
     }
 
     function goBack() {
-        window.location.href = "/dashboard"; // sửa lại đường dẫn nếu khác
+        window.location.href = "/?tab=users";
     }
 
     // Submit form tạo user
@@ -145,7 +145,7 @@
             const saved = await res.json();
             document.getElementById("id").value = saved.id; // điền ID sau khi lưu
             alert("Thêm User thành công!");
-            window.location.href = "/dashboard";
+            window.location.href = "/?tab=users";
         } catch (err) {
             alert("Lỗi: " + err.message);
         }
