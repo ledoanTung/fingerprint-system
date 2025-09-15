@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="${title}">My App</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <h1>My Dashboard</h1>
+</header>
+
+<!-- Nội dung chính -->
+<main>
+    <section th:replace="${section}"></section>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>© 2025 My App</p>
+</footer>
+
+<!-- JS -->
+<script th:src="@{/js/dashboard.js}"></script>
+<script th:src="@{/js/users.js}"></script>
+</body>
+</html>

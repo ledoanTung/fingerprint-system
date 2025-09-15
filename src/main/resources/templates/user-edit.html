@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Sửa User</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f6fa; margin: 0; padding: 20px; }
+    .container { max-width: 450px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
+    label { font-weight: bold; display: block; margin-top: 15px; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-top: 5px; }
+    .fingerprint-group { display: flex; gap: 10px; margin-top: 5px; }
+    .fingerprint-group input { flex: 1; }
+    .btn { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background 0.3s; }
+    .btn-primary { background: #27ae60; color: white; }
+    .btn-primary:hover { background: #1e8449; }
+    .btn-secondary { background: #95a5a6; color: white; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .actions { margin-top: 20px; display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Sửa User</h2>
+  <form id="editForm">
+    <input type="hidden" id="userId">
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password:</label>
+    <input type="text" id="password" name="password">
+
+    <label for="role">Role:</label>
+    <select id="role" name="role">
+      <option value="USER">USER</option>
+      <option value="ADMIN">ADMIN</option>
+    </select>
+
+    <label for="fingerprintId">Fingerprint ID:</label>
+    <div class="fingerprint-group">
+      <input type="text" id="fingerprintId" name="fingerprintId" readonly>
+      <button type="button" class="btn btn-secondary" onclick="getFingerprint()">Lấy vân tay</button>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Lấy ID từ URL
+  const userId = window.location.pathname.split("/").pop();
+
+// Gọi API lấy dữ liệu user để fill form
+fetch(`/api/users/${userId}`)
+    .then(res => res.json())
+    .then(user => {
+        document.getElementById("username").value = user.username;
+        document.getElementById("password").value = user.password;
+        document.getElementById("role").value = user.role;
+        document.getElementById("fingerprintId").value = user.fingerprintId || "";
+    })
+    .catch(err => console.error("Lỗi khi load user:", err));
+
+  // Hàm lấy vân tay từ BE → ESP32
+  async function getFingerprint() {
+        try {
+            const res = await fetch("/fingerprint/enroll");
+            if (!res.ok) throw new Error("Không lấy được ID từ BE");
+            const id = await res.text();
+            document.getElementById("fingerprintId").value = id;
+        } catch (err) {
+            alert("Lỗi: " + err.message);
+        }
+   }
+
+  // Quay lại danh sách
+  function goBack() {
+      window.location.href = "/dashboard";
+  }
+
+  // Submit form update
+  document.getElementById("editForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const user = {
+          username: document.getElementById("username").value,
+          password: document.getElementById("password").value,
+          role: document.getElementById("role").value,
+          fingerprintId: document.getElementById("fingerprintId").value
+      };
+
+      fetch(`/api/users/edit/${userId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+      })
+      .then(res => {
+          if (!res.ok) throw new Error("Cập nhật thất bại");
+          return res.json();
+      })
+      .then(data => {
+          alert("Cập nhật User thành công!");
+          window.location.href = "/dashboard";
+      })
+      .catch(err => alert("Lỗi: " + err.message));
+  });
+</script>
+</body>
+</html>

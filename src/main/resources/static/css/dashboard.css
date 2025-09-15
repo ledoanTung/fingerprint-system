@@ -1,0 +1,71 @@
+/* Reset cơ bản */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+/* Wrapper chia layout */
+.wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar bên trái */
+.sidebar {
+    width: 240px;
+    background-color: #343a40;
+    color: #fff;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100%;
+}
+
+.sidebar-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Menu link */
+.sidebar .nav-link {
+    color: #ddd;
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #495057;
+    color: #fff;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+/* Content bên phải */
+.content {
+    margin-left: 240px; /* để không đè sidebar */
+    padding: 20px;
+    width: calc(100% - 240px);
+    background-color: #fff;
+    overflow-y: auto;
+}
+
+/* Header trong content */
+.content h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}

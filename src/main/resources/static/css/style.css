@@ -1,0 +1,47 @@
+/* Sidebar */
+.bg-dark {
+    background-color: #1e293b !important; /* xanh đậm */
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+    background-color: #334155;
+}
+
+/* Card trong dashboard */
+.card {
+    border-radius: 12px;
+    border: none;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Bảng user */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th {
+    background-color: #f1f5f9;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+/* Nút hành động */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}

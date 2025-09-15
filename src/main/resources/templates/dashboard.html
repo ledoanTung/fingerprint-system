@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dashboard - Sidebar (HTML + CSS + JS)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+          --bg:#0f1724;
+          --panel:#0b1220;
+          --accent:#6ee7b7;
+          --muted:#94a3b8;
+          --glass: rgba(255,255,255,0.04);
+          --card: rgba(255,255,255,0.03);
+          --radius:12px;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#061025 0%, #071827 100%);color:#e6eef8}
+
+        .wrap{display:grid;grid-template-columns:280px 1fr;gap:24px;height:100vh;padding:24px}
+
+        .sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:20px;box-shadow:0 8px 30px rgba(2,6,23,0.6);display:flex;flex-direction:column}
+        .brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+        .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),#60a5fa);border-radius:10px;display:grid;place-items:center;font-weight:700;color:#012;}
+        .brand h1{font-size:16px;margin:0}
+        .desc{font-size:12px;color:var(--muted);margin-top:4px}
+
+        .nav{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+        .nav label{
+          display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--muted);
+          transition:all .18s ease;user-select:none
+        }
+        .nav label:hover{transform:translateX(6px)}
+        .nav label.active{background:linear-gradient(90deg, rgba(110,231,183,0.08), rgba(96,165,250,0.04));color:var(--accent);box-shadow:0 6px 18px rgba(4,6,15,0.6)}
+
+        .sfooter{margin-top:auto;font-size:12px;color:var(--muted);}
+
+        .content{padding:22px;border-radius:var(--radius);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:auto}
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        h2{margin:0}
+        .controls{display:flex;gap:10px;align-items:center}
+        .search{padding:8px 12px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.02);color:var(--muted)}
+
+        .panels > section{display:none}
+        .panels > section.active{display:block}
+
+        .row{display:flex;gap:16px;margin-bottom:16px}
+        .card{flex:1;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+        .small{font-size:12px;color:var(--muted)}
+        .big{font-size:20px;font-weight:700}
+
+        .hash-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+        .hash-item{padding:12px;border-radius:10px;background:var(--card);font-family:monospace;word-break:break-all}
+
+        table{width:100%;border-collapse:collapse;font-size:14px}
+        th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+        th{text-align:left;background:rgba(255,255,255,0.05)}
+        td{color:#e6eef8}
+
+        @media (max-width:880px){.wrap{grid-template-columns:1fr;}.sidebar{order:2}.content{order:1}}
+        .btn {
+  background:#6ee7b7;
+  color:#012;
+  padding:6px 12px;
+  border-radius:6px;
+  font-weight:600;
+  text-decoration:none;
+}
+.btn:hover { background:#34d399; }
+
+.btn-sm {
+  background:#60a5fa;
+  color:#fff;
+  padding:4px 8px;
+  border-radius:6px;
+  font-size:12px;
+  margin-right:4px;
+  text-decoration:none;
+}
+.btn-sm:hover { background:#3b82f6; }
+
+.btn-sm.danger { background:#f87171; }
+.btn-sm.danger:hover { background:#ef4444; }
+
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">DS</div>
+            <div>
+                <h1>My Dashboard</h1>
+                <div class="desc">Bảng điều khiển demo</div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <label data-tab="dashboard" class="active"><span class="ico">🏠</span> Dashboard</label>
+            <label data-tab="users"><span class="ico">👥</span> Users</label>
+            <label data-tab="reports"><span class="ico">📊</span> Reports</label>
+            <label data-tab="settings"><span class="ico">⚙️</span> Settings</label>
+        </nav>
+
+        <div class="sfooter">Phiên bản demo • JS switch tab</div>
+    </aside>
+
+    <main class="content">
+        <div class="header">
+            <div>
+                <h2>Dashboard</h2>
+                <div class="small">Tổng quan chức năng và dữ liệu mẫu</div>
+            </div>
+            <div class="controls">
+                <input class="search" placeholder="Tìm kiếm...">
+                <div class="small">User: admin</div>
+            </div>
+        </div>
+
+        <div class="panels">
+            <section id="dashboard" class="active">
+                <div class="row">
+                    <div class="card"><div class="small">Active Users</div><div class="big">1,248</div></div>
+                    <div class="card"><div class="small">Transactions</div><div class="big">3,912</div></div>
+                    <div class="card"><div class="small">Revenue</div><div class="big">$24,760</div></div>
+                </div>
+            </section>
+
+            <section id="users" th:classappend="${tab == 'users'} ? ' active'">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <h3>Danh sách Users</h3>
+                    <a th:href="@{/user-create}" class="btn">+ Thêm mới User</a>
+                </div>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                        <th>Fingerprint ID</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${users}">
+                        <td th:text="${u.id}"></td>
+                        <td th:text="${u.username}"></td>
+                        <td th:text="${u.password}"></td>
+                        <td th:text="${u.role}"></td>
+                        <td th:text="${u.fingerprintId}"></td>
+                        <td>
+                            <a th:href="@{'/user/edit/' + ${u.id}}" class="btn-sm">Sửa</a>
+                            <a th:href="@{'/user/delete/' + ${u.id}}"
+                               class="btn-sm danger"
+                               onclick="return confirm('Bạn có chắc muốn xoá user này?')">Xoá</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+
+
+            <section id="reports">
+                <div class="card"><div class="small">Monthly Report</div><div class="big">February 2025</div></div>
+            </section>
+
+            <section id="settings">
+                <div class="card"><div class="small">Theme</div><div class="big">Dark</div></div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script>
+    const navItems = document.querySelectorAll(".nav label");
+    const panels = document.querySelectorAll(".panels section");
+    const headerTitle = document.querySelector(".header h2");
+
+    navItems.forEach(label => {
+      label.addEventListener("click", () => {
+        // remove active classes
+        navItems.forEach(l => l.classList.remove("active"));
+        panels.forEach(p => p.classList.remove("active"));
+        // add active
+        label.classList.add("active");
+        const tab = label.getAttribute("data-tab");
+        document.getElementById(tab).classList.add("active");
+        // update header title
+        headerTitle.textContent = label.textContent.trim();
+      });
+    });
+</script>
+</body>
+</html>
