@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Danh sách Users</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="table-header">
+        <h3>Danh sách Users</h3>
+        <a th:href="@{/user-create}" class="btn">+ Thêm mới User</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Role</th>
+            <th>Fingerprint ID</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.password}"></td>
+            <td th:text="${u.role}"></td>
+            <td th:text="${u.fingerprintId}"></td>
+            <td>
+                <a th:href="@{'/user/edit/' + ${u.id}}" class="btn-sm">Sửa</a>
+                <button type="button" th:onclick="'deleteUser(' + ${u.id} + ')'" class="btn-sm danger">Xóa</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

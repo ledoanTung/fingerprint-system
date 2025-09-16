@@ -18,11 +18,10 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/users")
-    public String getUsers(Model model) {
-        List<User> users = userRepository.findAll();
-        model.addAttribute("users", users);
-        return "dashboard";
+    @GetMapping("/user-list")
+    public String showUsers(Model model) {
+        model.addAttribute("users", userRepository.findAll());
+        return "user-list";
     }
     // Tạo user mới
     @PostMapping("/users/create")
