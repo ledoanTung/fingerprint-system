@@ -25,8 +25,7 @@
             <td th:text="${log.userId}"></td>
             <td th:text="${#temporals.format(log.time, 'dd/MM/yyyy HH:mm')}"></td>
             <td>
-                <span th:text="${log.status}"
-                      th:class="'status ' + (${log.status} == 'IN' ? 'in' : 'out')">
+                <span th:text="${log.status}">
                 </span>
             </td>
         </tr>

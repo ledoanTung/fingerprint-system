@@ -17,20 +17,39 @@ public class LogController {
     @Autowired
     private LogRepository logRepository;
 
+//    @GetMapping("/logs")
+//    public String showLogs(HttpSession session, Model model) {
+//        User user = (User) session.getAttribute("user");
+//        if (user == null) return "redirect:/login";
+//
+//        List<Log> logs;
+//        if ("ADMIN".equals(user.getRole())) {
+//            logs = logRepository.findAll(); // admin xem tất cả
+//        } else {
+//            logs = logRepository.findByUserId(user.getId()); // user chỉ xem của mình
+//        }
+//
+//        model.addAttribute("logs", logs);
+//        model.addAttribute("user", user);
+//        return "logs";
+//    }
+
     @GetMapping("/logs")
-    public String showLogs(HttpSession session, Model model) {
+    public String logs(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
 
+        session.setAttribute("page", "logs");
+        model.addAttribute("user", user);
+
         List<Log> logs;
-        if ("ADMIN".equals(user.getRole())) {
-            logs = logRepository.findAll(); // admin xem tất cả
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            logs = logRepository.findAll();
         } else {
-            logs = logRepository.findByUserId(user.getId()); // user chỉ xem của mình
+            logs = logRepository.findByUserId(user.getId());
         }
 
         model.addAttribute("logs", logs);
-        model.addAttribute("user", user);
         return "logs";
     }
 }

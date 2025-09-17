@@ -1,5 +1,6 @@
 package com.example.attendance_system.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
 import com.example.attendance_system.model.User;
 import com.example.attendance_system.repository.UserRepository;
@@ -18,11 +19,25 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+//    @GetMapping("/user-list")
+//    public String showUsers(Model model) {
+//        model.addAttribute("users", userRepository.findAll());
+//        return "user-list";
+//    }
+
     @GetMapping("/user-list")
-    public String showUsers(Model model) {
+    public String userList(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+
+        if (!"ADMIN".equalsIgnoreCase(user.getRole())) return "redirect:/dashboard";
+
+        session.setAttribute("page", "users");
+        model.addAttribute("user", user);
         model.addAttribute("users", userRepository.findAll());
         return "user-list";
     }
+
     // Tạo user mới
     @PostMapping("/users/create")
     public ResponseEntity<?> createUser(@RequestBody User user) {

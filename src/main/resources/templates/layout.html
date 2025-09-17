@@ -20,12 +20,16 @@
         <nav class="nav">
             <a th:href="@{/dashboard}"
                th:classappend="${page == 'dashboard'} ? ' active'">🏠 Dashboard</a>
+<!--            <a th:href="@{/api/user-list}"-->
+<!--               th:if="${user.role == 'ADMIN'}"-->
+<!--               th:classappend="${page == 'users'} ? ' active'">👥 Users</a>-->
             <a th:href="@{/api/user-list}"
+               th:if="${session.user != null and session.user.role == 'ADMIN'}"
                th:classappend="${page == 'users'} ? ' active'">👥 Users</a>
+
             <a th:href="@{/logs}"
                th:classappend="${page == 'logs'} ? ' active'">📋 Logs</a>
-            <a th:href="@{/settings}"
-               th:classappend="${page == 'settings'} ? ' active'">⚙ Settings</a>
+            <a th:href="@{/logout}">🚪 Logout</a>
         </nav>
         <div class="sfooter">Phiên bản demo • Fingerprint system</div>
     </aside>

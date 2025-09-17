@@ -4,6 +4,7 @@ import com.example.attendance_system.model.Log;
 import com.example.attendance_system.model.User;
 import com.example.attendance_system.repository.LogRepository;
 import com.example.attendance_system.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,30 +14,15 @@ import java.util.List;
 
 @Controller
 public class DashboardController {
-    private final UserRepository userRepository;
-    private final LogRepository logRepository;
-
-    public DashboardController(UserRepository userRepository, LogRepository logRepository) {
-        this.userRepository = userRepository;
-        this.logRepository = logRepository;
-    }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+
+        session.setAttribute("page", "dashboard");
+        model.addAttribute("user", user);
         return "dashboard";
     }
-
-//    @GetMapping("/dashboard")
-//    public String dashboard(Model model,
-//                            @RequestParam(name = "tab", defaultValue = "logs") String tab) {
-//        if ("users".equals(tab)) {
-//            model.addAttribute("users", userRepository.findAll());
-//        } else if ("logs".equals(tab)) {
-//            model.addAttribute("logs", logRepository.findAll());
-//        }
-//
-//        model.addAttribute("tab", tab);
-//        return "dashboard";
-//    }
 
 }

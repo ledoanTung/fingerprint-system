@@ -42,37 +42,6 @@ if (createForm) {
     });
 }
 
-// Xử lý cho trang Edit
-const editForm = document.getElementById("editForm");
-if (editForm) {
-    editForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        const user = {
-            username: document.getElementById("username").value,
-            password: document.getElementById("password").value,
-            role: document.getElementById("role").value,
-            fingerprintId: document.getElementById("fingerprintId").value
-        };
-
-        fetch(`/api/users/edit/${userId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user)
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Cập nhật thất bại");
-            return res.json();
-        })
-        .then(data => {
-            alert("Cập nhật User thành công!");
-            window.location.href = "/api/user-list";
-        })
-        .catch(err => alert("Lỗi: " + err.message));
-    });
-}
-
-// Lấy ID từ URL (nếu có)
 const pathParts = window.location.pathname.split("/");
 const lastPart = pathParts[pathParts.length - 1];
 // Nếu lastPart là số (id user) thì mới gọi API để fill form
@@ -89,6 +58,36 @@ if (!isNaN(lastPart)) {
         })
         .catch(err => console.error("Lỗi khi load user:", err));
 }
+
+// Xử lý cho trang Edit
+const editForm = document.getElementById("editForm");
+if (editForm) {
+    editForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+            const user = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+            role: document.getElementById("role").value,
+            fingerprintId: document.getElementById("fingerprintId").value
+        };
+        console.log(lastPart);
+        fetch(`/api/users/edit/${lastPart}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Cập nhật thất bại");
+            return res.json();
+        })
+        .then(data => {
+            alert("Cập nhật User thành công!");
+            window.location.href = "/api/user-list";
+        })
+        .catch(err => alert("Lỗi: " + err.message));
+    });
+}
+
 
 function deleteUser(userId) {
     if(confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {

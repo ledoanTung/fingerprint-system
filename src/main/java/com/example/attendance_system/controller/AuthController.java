@@ -20,24 +20,28 @@ public class AuthController {
         return "login";
     }
 
-    // Xử lý login
     @PostMapping("/login")
     public String doLogin(@RequestParam String username,
                           @RequestParam String password,
                           HttpSession session,
                           Model model) {
+
         User user = userRepository.findByUsername(username);
+
         if (user != null && user.getPassword().equals(password)) {
+            // Lưu user vào session
             session.setAttribute("user", user);
 
-            // Nếu là admin → vào dashboard
-            if ("ADMIN".equals(user.getRole())) {
+            // Redirect theo role
+            if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                session.setAttribute("page", "dashboard");
                 return "redirect:/dashboard";
             } else {
-                // Nếu là user thường thì vào logs
-                return "redirect:/logs";
+                session.setAttribute("page", "logs");
+                return "redirect:/dashboard";
             }
         }
+
         model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
         return "login";
     }
