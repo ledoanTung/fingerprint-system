@@ -17,7 +17,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Bean
     public Esp32WebSocketClient esp32WebSocketClient(FingerprintService fingerprintService) throws Exception {
-        String esp32Uri = "ws://192.168.137.85:81/"; // 👈 thay bằng IP ESP32 của bạn
+        String esp32Uri = "ws://192.168.137.51:81/"; // 👈 thay bằng IP ESP32 của bạn
         Esp32WebSocketClient client = new Esp32WebSocketClient(new URI(esp32Uri), fingerprintService);
         client.connect();
         return client;

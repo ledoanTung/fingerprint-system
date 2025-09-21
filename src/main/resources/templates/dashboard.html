@@ -8,7 +8,11 @@
 <body>
 <section layout:fragment="content">
     <h2>Dashboard</h2>
-    <p>Chào mừng bạn đến dashboard.</p>
+    <p th:if="${user == null}">Bạn chưa đăng nhập. Hãy login để dùng đầy đủ chức năng.</p>
+    <p th:if="${user != null}">Xin chào, <span th:text="${user.username}"></span>!</p>
+
+    <button id="scanFingerprintBtn" class="btn btn-primary">🔍 Quét vân tay</button>
 </section>
+<script src="/js/dashboard.js"></script>
 </body>
 </html>
