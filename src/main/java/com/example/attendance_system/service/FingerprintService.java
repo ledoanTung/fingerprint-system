@@ -22,6 +22,10 @@ public class FingerprintService {
         return lastFingerprintId.isEmpty() ? "Chưa có ID" : lastFingerprintId;
     }
 
+    public void requestScan() {
+        Esp32WebSocketClient.sendMessage("SCAN");
+    }
+
     // Hàm này được WebSocket client gọi khi nhận phản hồi từ ESP32
     public void setLastFingerprintId(String id) {
         this.lastFingerprintId = id;

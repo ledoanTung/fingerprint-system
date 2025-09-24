@@ -11,8 +11,8 @@
     <p th:if="${user == null}">Bạn chưa đăng nhập. Hãy login để dùng đầy đủ chức năng.</p>
     <p th:if="${user != null}">Xin chào, <span th:text="${user.username}"></span>!</p>
 
-    <button id="scanFingerprintBtn" class="btn btn-primary">🔍 Quét vân tay</button>
+    <button type="button" th:onclick="startScan()">Quét vân tay</button>
+    <script src="/js/dashboard.js"></script>
 </section>
-<script src="/js/dashboard.js"></script>
 </body>
 </html>

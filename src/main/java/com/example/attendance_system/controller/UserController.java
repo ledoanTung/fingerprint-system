@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/api")
 public class UserController {
@@ -18,12 +16,6 @@ public class UserController {
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-//    @GetMapping("/user-list")
-//    public String showUsers(Model model) {
-//        model.addAttribute("users", userRepository.findAll());
-//        return "user-list";
-//    }
 
     @GetMapping("/user-list")
     public String userList(HttpSession session, Model model) {
