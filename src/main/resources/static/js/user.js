@@ -25,7 +25,7 @@ if (createForm) {
         };
 
         try {
-            const res = await fetch("/users/create", {
+            const res = await fetch("/api/users/create", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(user)
