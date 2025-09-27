@@ -1,6 +1,7 @@
 package com.example.attendance_system.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import com.example.attendance_system.model.User;
 import com.example.attendance_system.repository.UserRepository;
@@ -18,17 +19,22 @@ public class UserController {
     }
 
     @GetMapping("/user-list")
-    public String userList(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
+    public String userList(Authentication authentication, Model model) {
+        String username = authentication.getName();
 
-        if (!"ADMIN".equalsIgnoreCase(user.getRole())) return "redirect:/dashboard";
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
-        session.setAttribute("page", "users");
+        if (!"ADMIN".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/dashboard";
+        }
+        model.addAttribute("page", "users");
         model.addAttribute("user", user);
         model.addAttribute("users", userRepository.findAll());
+
         return "user-list";
     }
+
 
     // Tạo user mới
     @PostMapping("/users/create")
@@ -50,6 +56,7 @@ public class UserController {
     }
 
     @PutMapping("/users/edit/{id}")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> editUser(@PathVariable Long id, @RequestBody User user) {
         return userRepository.findById(id).map(u -> {
             u.setUsername(user.getUsername());
@@ -62,6 +69,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         if (!userRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -69,6 +77,7 @@ public class UserController {
         userRepository.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
+
 
 
 }

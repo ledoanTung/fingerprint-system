@@ -3,8 +3,10 @@ package com.example.attendance_system.controller;
 import com.example.attendance_system.model.Log;
 import com.example.attendance_system.model.User;
 import com.example.attendance_system.repository.LogRepository;
+import com.example.attendance_system.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,31 +18,24 @@ public class LogController {
 
     @Autowired
     private LogRepository logRepository;
-
-//    @GetMapping("/logs")
-//    public String showLogs(HttpSession session, Model model) {
-//        User user = (User) session.getAttribute("user");
-//        if (user == null) return "redirect:/login";
-//
-//        List<Log> logs;
-//        if ("ADMIN".equals(user.getRole())) {
-//            logs = logRepository.findAll(); // admin xem tất cả
-//        } else {
-//            logs = logRepository.findByUserId(user.getId()); // user chỉ xem của mình
-//        }
-//
-//        model.addAttribute("logs", logs);
-//        model.addAttribute("user", user);
-//        return "logs";
-//    }
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/logs")
-    public String logs(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
+    public String logs(Authentication authentication, Model model) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
 
-        session.setAttribute("page", "logs");
+        // Lấy username từ authentication
+        String username = authentication.getName();
+
+        // Tìm user từ DB
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
         model.addAttribute("user", user);
+        model.addAttribute("page", "logs");
 
         List<Log> logs;
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
