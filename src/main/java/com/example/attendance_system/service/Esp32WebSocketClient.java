@@ -4,8 +4,14 @@ import com.example.attendance_system.model.User;
 import com.example.attendance_system.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -17,6 +23,8 @@ public class Esp32WebSocketClient extends WebSocketClient {
     private static Esp32WebSocketClient instance;
     private final FingerprintService fingerprintService;
     private final UserRepository userRepository;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public Esp32WebSocketClient(URI serverUri, FingerprintService fingerprintService, UserRepository userRepository) {
         super(serverUri);
@@ -44,8 +52,9 @@ public class Esp32WebSocketClient extends WebSocketClient {
                     if (node.has("fingerprintId")) {
                         String fingerprintId = node.get("fingerprintId").asText();
                         System.out.println("Enrolled fingerprint: " + fingerprintId);
+
+                        // Lưu fingerprintId tạm thời (nếu bạn muốn gán cho user mới)
                         fingerprintService.setLastFingerprintId(fingerprintId);
-                        // TODO: gán fingerprintId cho user mới nếu cần
                     } else {
                         System.out.println("Enroll failed");
                     }
@@ -54,31 +63,15 @@ public class Esp32WebSocketClient extends WebSocketClient {
                 } else if ("scan".equalsIgnoreCase(action)) {
                     if (node.has("fingerprintId")) {
                         Integer fingerprintId = node.get("fingerprintId").asInt();
+                        System.out.println("Scanned fingerprintId: " + fingerprintId);
 
-                        Optional<User> optionalUser = userRepository.findByFingerprintId(fingerprintId);
-
-                        Map<String, Object> response = new HashMap<>();
-
-                        if (optionalUser.isPresent()) {
-                            User user = optionalUser.get();
-                            System.out.println("Login success for user: " + user.getUsername());
-
-                            response.put("status", "success");
-                            response.put("username", user.getUsername());
-                            response.put("role", user.getRole());
-//                            fingerprintService.login(user);
-
-                        } else {
-                            System.out.println("Login failed: fingerprint not recognized");
-                            response.put("status", "fail");
-                            response.put("message", "Fingerprint not recognized");
-                        }
-
-                        // Gửi kết quả về FE qua STOMP WebSocket
-                        fingerprintService.sendScanResultToFE(optionalUser.orElse(null));
+                        // 🚨 KHÔNG gọi login ở đây
+                        // Gửi fingerprintId về FE qua STOMP topic
+                        fingerprintService.sendScannedIdToFE(fingerprintId);
 
                     } else {
-                        System.out.println("Scan failed: no fingerprintId");
+                        System.out.println("Scan failed (no fingerprintId)");
+                        fingerprintService.sendScannedIdToFE(null);
                     }
                 }
             }
@@ -87,7 +80,6 @@ public class Esp32WebSocketClient extends WebSocketClient {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void onClose(int code, String reason, boolean remote) {

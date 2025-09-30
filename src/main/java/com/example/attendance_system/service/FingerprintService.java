@@ -1,6 +1,5 @@
 package com.example.attendance_system.service;
 
-import com.example.attendance_system.model.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -21,10 +20,7 @@ public class FingerprintService {
 
     // Gửi lệnh "enroll" xuống ESP32
     public String enroll() {
-        // Gửi message đến ESP32 WebSocket
         Esp32WebSocketClient.sendMessage("enroll");
-
-        // Chờ ESP32 phản hồi (ở đây demo chờ cứng 3 giây)
         try {
             Thread.sleep(20000);
         } catch (InterruptedException e) {
@@ -43,34 +39,15 @@ public class FingerprintService {
         this.lastFingerprintId = id;
     }
 
-    public void sendScanResultToFE(User user) {
-        Map<String, Object> data = new HashMap<>();
-        if (user != null) {
-            data.put("status", "success");
-            data.put("username", user.getUsername());
-            data.put("role", user.getRole());
-        } else {
-            data.put("status", "fail");
-            data.put("message", "Fingerprint not recognized");
-        }
-
-        // Gửi tới FE, FE subscribe /topic/fingerprint
-        messagingTemplate.convertAndSend("/topic/fingerprint", data);
+public void sendScannedIdToFE(Integer fingerprintId) {
+    Map<String, Object> payload = new HashMap<>();
+    if (fingerprintId != null) {
+        payload.put("status", "scanned");
+        payload.put("fingerprintId", fingerprintId);
+    } else {
+        payload.put("status", "fail");
+        payload.put("message", "Fingerprint not recognized");
     }
-
-
-    public String login(User user) {
-        // Lưu user vào session
-        session.setAttribute("user", user);
-
-        // Tùy theo role bạn có thể lưu thêm thông tin
-        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-            session.setAttribute("page", "dashboard");
-            return "redirect:/dashboard";
-        } else {
-            session.setAttribute("page", "logs");
-            return "redirect:/dashboard";
-        }
-    }
-
+    messagingTemplate.convertAndSend("/topic/fingerprint", payload);
+}
 }

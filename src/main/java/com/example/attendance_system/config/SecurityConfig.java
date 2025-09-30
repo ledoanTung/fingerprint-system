@@ -48,7 +48,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/css/**", "/js/**", "/public/**").permitAll()
+                        .requestMatchers("/login", "/css/**", "/js/**", "/public/**", "/dashboard").permitAll()
+                        .requestMatchers("/fingerprint/**").permitAll()   // 👈 cho phép API login bằng vân tay
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/app/**").permitAll()
                         .requestMatchers("/admin/**", "/api/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -59,7 +62,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/dashboard")
                         .permitAll()
                 )
                 .sessionManagement(session -> session

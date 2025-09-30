@@ -4,7 +4,6 @@ import com.example.attendance_system.model.Log;
 import com.example.attendance_system.model.User;
 import com.example.attendance_system.repository.LogRepository;
 import com.example.attendance_system.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,5 @@
 package com.example.attendance_system.controller;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import com.example.attendance_system.model.User;
