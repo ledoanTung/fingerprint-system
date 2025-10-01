@@ -1,6 +1,5 @@
 package com.example.attendance_system.service;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -13,8 +12,6 @@ public class FingerprintService {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-    @Autowired
-    private HttpSession session;
 
     private String lastFingerprintId = "";
 

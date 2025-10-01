@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
     <title>Dashboard</title>
@@ -8,10 +9,8 @@
 <body>
 <section layout:fragment="content">
     <h2>Dashboard</h2>
-    <p th:if="${user == null}">Bạn chưa đăng nhập. Hãy login để dùng đầy đủ chức năng.</p>
-    <p th:if="${user != null}">Xin chào, <span th:text="${user.username}"></span>!</p>
-
-    <button type="button" id="scanBtn">Quét vân tay</button>
+    <p sec:authorize="isAnonymous()">Bạn chưa đăng nhập. Hãy login để dùng đầy đủ chức năng.</p>
+    <button type="button" id="scanBtn" sec:authorize="isAnonymous()">Quét vân tay</button>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script src="/js/dashboard.js"></script>

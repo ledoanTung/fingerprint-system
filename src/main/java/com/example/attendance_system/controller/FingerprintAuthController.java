@@ -1,6 +1,8 @@
 package com.example.attendance_system.controller;
 
+import com.example.attendance_system.model.Log;
 import com.example.attendance_system.model.User;
+import com.example.attendance_system.repository.LogRepository;
 import com.example.attendance_system.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,9 +25,11 @@ import java.util.Optional;
 public class FingerprintAuthController {
 
     private final UserRepository userRepository;
+    private final LogRepository logRepository;
 
-    public FingerprintAuthController(UserRepository userRepository) {
+    public FingerprintAuthController(UserRepository userRepository, LogRepository logRepository) {
         this.userRepository = userRepository;
+        this.logRepository = logRepository;
     }
 
     @PostMapping("/login")
@@ -35,29 +40,43 @@ public class FingerprintAuthController {
         Optional<User> optionalUser = userRepository.findByFingerprintId(fingerprintId);
 
         if (optionalUser.isEmpty()) {
+            // lưu log Access Denied
+            Log log = new Log();
+            log.setUserId(null); // chưa xác định user
+            log.setStatus("Login Failed (Fingerprint not recognized)");
+            log.setTime(LocalDateTime.now());
+            logRepository.save(log);
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("status", "fail", "message", "Fingerprint not recognized"));
         }
 
         User user = optionalUser.get();
 
-        // tạo authority từ role (đảm bảo role lưu là "ADMIN" hoặc "USER" etc)
+        // tạo authority từ role
         List<SimpleGrantedAuthority> authorities = List.of(
                 new SimpleGrantedAuthority("ROLE_" + user.getRole())
         );
 
-        // tạo authentication token (username làm principal)
+        // tạo authentication token
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), null, authorities);
 
-        // tạo và set SecurityContext
+        // set SecurityContext
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authToken);
         SecurityContextHolder.setContext(context);
 
-        // lưu context vào HttpSession (rất quan trọng)
-        request.getSession(true); // tạo session nếu chưa có
+        // lưu context vào HttpSession
+        request.getSession(true);
         new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+
+        // lưu log Access Granted
+        Log log = new Log();
+        log.setUserId(user.getId());
+        log.setStatus("Login Success (Fingerprint)");
+        log.setTime(LocalDateTime.now());
+        logRepository.save(log);
 
         Map<String, Object> responseBody = Map.of(
                 "status", "success",
@@ -65,6 +84,7 @@ public class FingerprintAuthController {
                 "role", user.getRole()
         );
         System.out.println(">>> Login API response = " + responseBody);
+
         return ResponseEntity.ok(responseBody);
     }
 }

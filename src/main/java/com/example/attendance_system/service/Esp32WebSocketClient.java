@@ -1,22 +1,13 @@
 package com.example.attendance_system.service;
 
-import com.example.attendance_system.model.User;
 import com.example.attendance_system.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 public class Esp32WebSocketClient extends WebSocketClient {
 
